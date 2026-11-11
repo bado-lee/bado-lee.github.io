@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bado Lee (이바도)</title>
+<meta name="description" content="Bado Lee leads the Multimodal Model organization at NAVER Cloud (HyperCLOVA X SEED) and co-created the CRAFT text detector.">
+<meta name="author" content="Bado Lee">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fbfcfd;
+    --ink: #1b2a3a;
+    --soft: #5a6878;
+    --rule: #dde3ea;
+    --link: #2447d6;
+    --region: #e0452b;   /* character-region boxes, after CRAFT's heatmaps */
+    --word: #2447d6;     /* word-level box */
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10161d;
+      --ink: #e6ebf0;
+      --soft: #9aa7b5;
+      --rule: #2a3440;
+      --link: #8fa8ff;
+      --region: #ff7a5c;
+      --word: #8fa8ff;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  html[data-lang="ko"] body { line-height: 1.8; word-break: keep-all; }
+
+  /* language switching */
+  html[data-lang="en"] [data-l="ko"],
+  html[data-lang="ko"] [data-l="en"] { display: none; }
+
+  .page { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 2px; }
+
+  /* top bar */
+  .bar { display: flex; justify-content: flex-end; }
+  .lang { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 2px; }
+  .lang button {
+    font: inherit; font-size: .8125rem; color: var(--soft);
+    background: none; border: 0; border-radius: 999px; padding: .2rem .75rem; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+  /* hero */
+  .hero { display: flex; gap: 2rem; align-items: flex-start; justify-content: space-between; margin-top: 2.5rem; }
+  .hero-text { min-width: 0; }
+  .photo { width: 9rem; height: 9rem; border-radius: 50%; object-fit: cover; flex: none; }
+
+  h1 { margin: 0; font-size: clamp(2.25rem, 8vw, 3.25rem); font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+  .word {
+    display: inline-block; position: relative; padding: .05em .12em; margin: .14em .5em .14em .14em;
+    outline: 1.5px solid var(--word); outline-offset: .12em;
+  }
+  .word:last-child { margin-right: 0; }
+  .ch {
+    display: inline-block; padding: 0 .04em; margin: 0 .015em;
+    box-shadow: inset 0 0 0 1.5px var(--region);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ch { animation: detect .35s ease-out both; animation-delay: calc(var(--i) * 70ms + 150ms); }
+    .word { animation: link .4s ease-out both; animation-delay: 900ms; }
+    @keyframes detect { from { box-shadow: inset 0 0 0 1.5px transparent; } }
+    @keyframes link { from { outline-color: transparent; } }
+  }
+
+  .role { margin: 1.4rem 0 0; font-size: 1.0625rem; font-weight: 500; }
+  .links { margin: .9rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: .35rem 1.25rem; font-size: .9375rem; }
+
+  /* sections */
+  section { margin-top: 3rem; }
+  h2 { margin: 0 0 1rem; padding-bottom: .4rem; border-bottom: 1px solid var(--rule); font-size: 1.125rem; font-weight: 600; }
+  p { margin: 0 0 1rem; }
+  .soft { color: var(--soft); }
+
+  .work { margin: 0; padding: 0; list-style: none; }
+  .work li { margin-bottom: 1.4rem; }
+  .work h3 { margin: 0 0 .2rem; font-size: 1rem; font-weight: 600; }
+  .work p { margin: 0; }
+  .work .more { font-size: .875rem; margin-top: .25rem; }
+  .work .more a { margin-right: 1rem; }
+
+  .pubs { margin: 0; padding: 0; list-style: none; font-size: .9375rem; line-height: 1.55; }
+  .pubs li { margin-bottom: 1rem; }
+  .pubs .t { font-weight: 500; display: block; }
+  .pubs .a, .pubs .v { color: var(--soft); display: block; font-size: .875rem; }
+  .pubs b { color: var(--ink); font-weight: 600; }
+
+  .rows { margin: 0; padding: 0; list-style: none; }
+  .rows li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; margin-bottom: .8rem; }
+  .rows .when { color: var(--soft); font-size: .875rem; padding-top: .1rem; font-variant-numeric: tabular-nums; }
+  .rows .org { font-weight: 500; }
+  .rows .note { display: block; color: var(--soft); font-size: .875rem; }
+
+  footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--soft); font-size: .8125rem; }
+
+  @media (max-width: 34rem) {
+    .hero { flex-direction: column-reverse; gap: 1.25rem; }
+    .photo { width: 6.5rem; height: 6.5rem; }
+    .rows li { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="bar">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set="en" aria-pressed="true">English</button>
+      <button type="button" data-set="ko" aria-pressed="false">한국어</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1 data-l="en" aria-label="Bado Lee">
+        <span class="word" aria-hidden="true"><span class="ch" style="--i:0">B</span><span class="ch" style="--i:1">a</span><span class="ch" style="--i:2">d</span><span class="ch" style="--i:3">o</span></span><span class="word" aria-hidden="true"><span class="ch" style="--i:4">L</span><span class="ch" style="--i:5">e</span><span class="ch" style="--i:6">e</span></span>
+      </h1>
+      <h1 data-l="ko" aria-label="이바도">
+        <span class="word" aria-hidden="true"><span class="ch" style="--i:0">이</span><span class="ch" style="--i:1">바</span><span class="ch" style="--i:2">도</span></span>
+      </h1>
+
+      <p class="role" data-l="en">Vice President, Multimodal Model at NAVER Cloud</p>
+      <p class="role" data-l="ko">네이버클라우드 멀티모달 모델 조직장</p>
+
+      <ul class="links">
+        <li><a href="mailto:marong84@gmail.com">marong84@gmail.com</a></li>
+        <li><a href="https://scholar.google.com/citations?user=UAcfGOgAAAAJ">Google Scholar</a></li>
+        <li><a href="https://huggingface.co/naver-hyperclovax">Hugging Face</a></li>
+        <li><a href="https://github.com/clovaai/CRAFT-pytorch">GitHub</a></li>
+        <li><a href="Bado_Lee_CV.pdf">CV (PDF)</a></li>
+      </ul>
+    </div>
+    <!-- Put a square photo named photo.jpg next to this file. Without it, nothing is shown. -->
+    <img class="photo" src="photo.jpg" alt="Bado Lee" onerror="this.remove()">
+  </header>
+
+  <section>
+    <div data-l="en">
+      <p>I lead the Multimodal Model organization at NAVER Cloud, where we build the HyperCLOVA X SEED vision-language and omnimodal foundation models. We release them openly on Hugging Face, and we work with NVIDIA and others in the Nemotron Coalition on open model development.</p>
+      <p>Before this I led OCR and document AI at NAVER. That is where I co-created CRAFT, a text detector that finds individual character regions and links them into words. It became the default detection model in EasyOCR, and the boxes around my name on this page are a nod to it. Earlier I built on-device vision engines for Galaxy cameras at Samsung Electronics.</p>
+      <p>I studied electrical and computer engineering at Seoul National University (B.S., M.S.), working with Byoung-Tak Zhang in the Biointelligence Laboratory.</p>
+    </div>
+    <div data-l="ko">
+      <p>네이버클라우드에서 멀티모달 모델 조직을 이끌고 있습니다. HyperCLOVA X SEED 비전-언어·옴니모달 파운데이션 모델을 만들고, 결과물을 Hugging Face에 오픈소스로 공개합니다. NVIDIA Nemotron Coalition에서 오픈 모델 공동 개발에도 참여하고 있습니다.</p>
+      <p>그 전에는 네이버에서 OCR과 문서 AI를 맡았습니다. 글자 하나하나의 영역을 찾고 이를 단어로 연결하는 문자 검출기 CRAFT를 이때 함께 만들었고, CRAFT는 EasyOCR의 기본 검출 모델로 쓰이고 있습니다. 이 페이지에서 제 이름을 둘러싼 박스가 바로 그 방식입니다. 더 이전에는 삼성전자에서 Galaxy 카메라용 온디바이스 비전 엔진을 개발했습니다.</p>
+      <p>서울대학교에서 전기·컴퓨터공학을 공부했고(학사·석사), 바이오지능연구실에서 장병탁 교수님의 지도를 받았습니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-l="en">Selected work</h2>
+    <h2 data-l="ko">주요 작업</h2>
+    <ul class="work">
+      <li>
+        <h3>HyperCLOVA X SEED</h3>
+        <p data-l="en">Open vision-language and omnimodal foundation models built for Korean language and context. Vision-Instruct-3B is downloaded more than 100,000 times a month.</p>
+        <p data-l="ko">한국어와 한국적 맥락에 맞춘 공개 비전-언어·옴니모달 파운데이션 모델. Vision-Instruct-3B는 월 10만 회 이상 다운로드됩니다.</p>
+        <p class="more">
+          <a href="https://huggingface.co/naver-hyperclovax/HyperCLOVAX-SEED-Vision-Instruct-3B">Vision-Instruct-3B</a>
+          <a href="https://huggingface.co/naver-hyperclovax/HyperCLOVAX-SEED-Omni-8B">Omni-8B</a>
+        </p>
+      </li>
+      <li>
+        <h3>CRAFT</h3>
+        <p data-l="en">Character Region Awareness for Text Detection (CVPR 2019). Cited more than 1,600 times and used as the default detector in EasyOCR.</p>
+        <p data-l="ko">Character Region Awareness for Text Detection (CVPR 2019). 1,600회 이상 인용되었고 EasyOCR의 기본 검출기로 쓰입니다.</p>
+        <p class="more"><a href="https://github.com/clovaai/CRAFT-pytorch"><span data-l="en">Code</span><span data-l="ko">코드</span></a></p>
+      </li>
+      <li>
+        <h3 data-l="en">Few-shot font generation</h3>
+        <h3 data-l="ko">퓨샷 폰트 생성</h3>
+        <p data-l="en">DM-Font (ECCV 2020), LF-Font (AAAI 2021), MX-Font (ICCV 2021) and a TPAMI article. The same line of work produced Nanum Handwriting, 109 free fonts generated from the handwriting of people across Korea.</p>
+        <p data-l="ko">DM-Font (ECCV 2020), LF-Font (AAAI 2021), MX-Font (ICCV 2021), TPAMI 논문. 이 연구로 전국에서 모은 손글씨를 폰트 109종으로 만든 나눔손글씨를 공개했습니다.</p>
+        <p class="more"><a href="https://clova.ai/handwriting"><span data-l="en">Nanum Handwriting</span><span data-l="ko">나눔손글씨</span></a></p>
+      </li>
+      <li>
+        <h3 data-l="en">Document AI</h3>
+        <h3 data-l="ko">문서 AI</h3>
+        <p data-l="en">CORD, DEER, CREPE and CREAM: datasets and models for reading receipts and documents end to end, running in CLOVA OCR.</p>
+        <p data-l="ko">CORD, DEER, CREPE, CREAM. 영수증과 문서를 처음부터 끝까지 읽어내는 데이터셋과 모델로, CLOVA OCR에 적용되어 있습니다.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-l="en">Publications</h2>
+    <h2 data-l="ko">논문</h2>
+    <p class="soft" data-l="en">A selection. The full list and current citation counts are on <a href="https://scholar.google.com/citations?user=UAcfGOgAAAAJ">Google Scholar</a>.</p>
+    <p class="soft" data-l="ko">일부만 추렸습니다. 전체 목록과 최신 인용 수는 <a href="https://scholar.google.com/citations?user=UAcfGOgAAAAJ">Google Scholar</a>에 있습니다.</p>
+    <ul class="pubs">
+      <li><span class="t">CREPE: Coordinate-Aware End-to-End Document Parser</span><span class="a">Y. Okamoto, et al., S. Park, <b>B. Lee</b></span><span class="v">ICDAR 2024</span></li>
+      <li><span class="t">Few-shot Font Generation with Weakly Supervised Localized Representations</span><span class="a">S. Park, S. Chun, J. Cha, <b>B. Lee</b>, H. Shim</span><span class="v">IEEE TPAMI, 2024</span></li>
+      <li><span class="t">CREAM: Visually-Situated Natural Language Understanding with Contrastive Reading Model and Frozen Large Language Models</span><span class="a">G. Kim, et al., <b>B. Lee</b>, S. Park</span><span class="v">EMNLP 2023</span></li>
+      <li><span class="t">DEER: Detection-agnostic End-to-End Recognizer for Scene Text Spotting</span><span class="a">S. Kim, et al., <b>B. Lee</b>, Y. Baek</span><span class="v">arXiv 2022</span></li>
+      <li><span class="t">Multiple Heads are Better than One: Few-shot Font Generation with Multiple Localized Experts</span><span class="a">S. Park, S. Chun, J. Cha, <b>B. Lee</b>, H. Shim</span><span class="v">ICCV 2021</span></li>
+      <li><span class="t">Few-shot Font Generation with Localized Style Representations and Factorization</span><span class="a">S. Park, S. Chun, J. Cha, <b>B. Lee</b>, H. Shim</span><span class="v">AAAI 2021</span></li>
+      <li><span class="t">Few-shot Compositional Font Generation with Dual Memory</span><span class="a">J. Cha, S. Chun, G. Lee, <b>B. Lee</b>, S. Kim, H. Lee</span><span class="v">ECCV 2020</span></li>
+      <li><span class="t">Character Region Awareness for Text Detection</span><span class="a">Y. Baek, <b>B. Lee</b>, D. Han, S. Yun, H. Lee</span><span class="v">CVPR 2019</span></li>
+      <li><span class="t">CORD: A Consolidated Receipt Dataset for Post-OCR Parsing</span><span class="a">S. Park, S. Shin, <b>B. Lee</b>, J. Lee, J. Surh, M. Seo, H. Lee</span><span class="v">NeurIPS 2019 Workshop on Document Intelligence</span></li>
+      <li><span class="t">Post-OCR Parsing: Building Simple and Robust Parser via BIO Tagging</span><span class="a">W. Hwang, et al., <b>B. Lee</b></span><span class="v">NeurIPS 2019 Workshop on Document Intelligence</span></li>
+      <li><span class="t">Evolving a Population Code for Multimodal Concept Learning</span><span class="a"><b>B. Lee</b>, H.-S. Seok, B.-T. Zhang</span><span class="v">IEEE CEC 2011</span></li>
+      <li><span class="t">Layered Hypernetwork Models for Cross-modal Associative Text and Image Keyword Generation in Multimodal Information Retrieval</span><span class="a">J.-W. Ha, B.-H. Kim, <b>B. Lee</b>, B.-T. Zhang</span><span class="v">PRICAI 2010</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-l="en">Experience</h2>
+    <h2 data-l="ko">경력</h2>
+    <ul class="rows">
+      <li>
+        <span class="when" data-l="en">2023 to now</span><span class="when" data-l="ko">2023 ~ 현재</span>
+        <span>
+          <span class="org" data-l="en">NAVER Cloud</span><span class="org" data-l="ko">네이버클라우드</span>
+          <span class="note" data-l="en">Head of the Multimodal Model organization since 2026. Before that, vision-language model lead, including Korea's sovereign AI foundation model project with the Ministry of Science and ICT.</span>
+          <span class="note" data-l="ko">2026년부터 멀티모달 모델 조직장. 그 전에는 VLM 개발 리더로 과학기술정보통신부 독자 AI 파운데이션 모델 프로젝트 등을 맡았습니다.</span>
+        </span>
+      </li>
+      <li>
+        <span class="when">2018 ~ 2022</span>
+        <span>
+          <span class="org" data-l="en">NAVER</span><span class="org" data-l="ko">네이버</span>
+          <span class="note" data-l="en">OCR and document AI at Clova AI, as engineer and then lead.</span>
+          <span class="note" data-l="ko">Clova AI에서 OCR·문서 AI 개발, 이후 조직 리더.</span>
+        </span>
+      </li>
+      <li>
+        <span class="when">2012 ~ 2017</span>
+        <span>
+          <span class="org" data-l="en">Samsung Electronics</span><span class="org" data-l="ko">삼성전자</span>
+          <span class="note" data-l="en">Vision engine for Galaxy smartphone cameras, Mobile Communications Business.</span>
+          <span class="note" data-l="ko">무선사업부, Galaxy 스마트폰 카메라용 Vision Engine 개발.</span>
+        </span>
+      </li>
+      <li>
+        <span class="when">2003 ~ 2012</span>
+        <span>
+          <span class="org" data-l="en">Seoul National University</span><span class="org" data-l="ko">서울대학교</span>
+          <span class="note" data-l="en">M.S. in Electrical and Computer Engineering (2012), B.S. in Electrical Engineering (2010).</span>
+          <span class="note" data-l="ko">전기·컴퓨터공학 석사(2012), 전기공학 학사(2010).</span>
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-l="en">Talks and press</h2>
+    <h2 data-l="ko">발표와 언론</h2>
+    <ul class="rows">
+      <li>
+        <span class="when">2022</span>
+        <span>
+          <a href="https://www.ddaily.co.kr/page/view/2022020316413084008"><span data-l="en">Interview on CLOVA OCR, Digital Daily</span><span data-l="ko">디지털데일리 「네이버 어벤저스」 클로바 OCR 인터뷰</span></a>
+        </span>
+      </li>
+      <li>
+        <span class="when">2021</span>
+        <span>
+          <a href="https://www.aitimes.kr/news/articleView.html?idxno=22763"><span data-l="en">NAVER at ICCV 2021, AI Times</span><span data-l="ko">인공지능신문, ICCV 2021 네이버 논문 발표</span></a>
+        </span>
+      </li>
+      <li>
+        <span class="when">2020</span>
+        <span>
+          <a href="https://deview.kr/2020/sessions/406">DEVIEW 2020: CAPTCHA vs. PARSING</a>
+        </span>
+      </li>
+      <li>
+        <span class="when">2019</span>
+        <span>
+          <a href="https://deview.kr/2019/schedule/294"><span data-l="en">DEVIEW 2019: Building an AI that writes in my handwriting</span><span data-l="ko">DEVIEW 2019: 나 대신 손글씨 써주는 AI 만들기</span></a>
+          <span class="note"><a href="https://zdnet.co.kr/view/?no=20191028132832"><span data-l="en">Coverage in ZDNet Korea</span><span data-l="ko">지디넷코리아 보도</span></a></span>
+        </span>
+      </li>
+      <li>
+        <span class="when">2019</span>
+        <span>
+          <a href="https://www.etnews.com/20190621000179"><span data-l="en">CRAFT at CVPR 2019, The Electronic Times</span><span data-l="ko">전자신문, CVPR 2019 CRAFT 발표</span></a>
+        </span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-l="en">Patents</h2>
+    <h2 data-l="ko">특허</h2>
+    <p data-l="en">Seven registered patents in Korea and Japan, covering handwriting font generation, text detection, CAPTCHA, and image distortion correction.</p>
+    <p data-l="ko">손글씨 폰트 생성, 글자 검출, 캡차, 영상 왜곡 보정 분야에서 한국·일본 등록 특허 7건.</p>
+  </section>
+
+  <footer>
+    <span data-l="en">Last updated November 2026.</span>
+    <span data-l="ko">2026년 11월 업데이트.</span>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var buttons = document.querySelectorAll('.lang button');
+
+    function apply(lang) {
+      root.setAttribute('data-lang', lang);
+      root.setAttribute('lang', lang);
+      document.title = lang === 'ko' ? '이바도 (Bado Lee)' : 'Bado Lee (이바도)';
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-set') === lang));
+      });
+    }
+
+    function initial() {
+      var h = location.hash.replace('#', '');
+      if (h === 'ko' || h === 'en') return h;
+      try {
+        var saved = localStorage.getItem('lang');
+        if (saved === 'ko' || saved === 'en') return saved;
+      } catch (e) {}
+      return (navigator.language || '').toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var lang = b.getAttribute('data-set');
+        apply(lang);
+        try { localStorage.setItem('lang', lang); } catch (e) {}
+        history.replaceState(null, '', '#' + lang);
+      });
+    });
+
+    window.addEventListener('hashchange', function () { apply(initial()); });
+    apply(initial());
+  })();
+</script>
+</body>
+</html>
